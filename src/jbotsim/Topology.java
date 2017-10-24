@@ -327,14 +327,12 @@ public class Topology extends _Properties implements ClockListener{
      * Causes the onStart() method to be called again on each node (and each StartListener)
      */
     public void restart(){
-        pause();
         resetTime();
         clearMessages();
         for (Node n : nodes)
             n.onStart();
         for (StartListener listener : startListeners)
             listener.onStart();
-        resume();
     }
     /**
      * Removes all the nodes (and links) of this topology.
@@ -391,7 +389,6 @@ public class Topology extends _Properties implements ClockListener{
      * @param n The node to be added.
      */
     public void addNode(double x, double y, Node n){
-        pause();
         if (x == -1)
             x = Math.random() * dimensions.width;
         if (y == -1)
@@ -413,7 +410,6 @@ public class Topology extends _Properties implements ClockListener{
         if (isStarted)
             n.onStart();
         touch(n);
-        resume();
     }
     /**
      * Removes the specified node from this topology. All adjacent links will
@@ -421,7 +417,6 @@ public class Topology extends _Properties implements ClockListener{
      * @param n The node to be removed.
      */
     public void removeNode(Node n){
-        pause();
         n.onStop();
         for (Link l : n.getLinks(true))
             removeLink(l);
@@ -434,7 +429,6 @@ public class Topology extends _Properties implements ClockListener{
             }
         }
         n.topo=null;
-        resume();
     }
     public void selectNode(Node n){
         selectedNode = n;

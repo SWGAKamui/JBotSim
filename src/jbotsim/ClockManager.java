@@ -28,7 +28,6 @@ public class ClockManager{
     ClockManager(Topology topology){
         this.tp = topology;
         clock = new DefaultClock(this);
-        clock.start();
         try {Thread.sleep(100);} catch (InterruptedException e) {e.printStackTrace();}
     }
 

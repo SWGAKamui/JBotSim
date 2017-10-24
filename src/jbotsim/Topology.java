@@ -55,36 +55,21 @@ public class Topology extends _Properties implements ClockListener{
      * Creates a topology.
      */
     public Topology(){
-        this(600, 400, true);
-    }
-    /**
-     * Creates a topology and sets its running status (running/paused).
-     */
-    public Topology(boolean toBeStarted){
-        this(600, 400, toBeStarted);
+        this(600, 400);
     }
     /**
      * Creates a topology of given dimensions.
      */
     public Topology(int width, int height){
-        this(width, height, true);
-    }
-    /**
-     * Creates a topology of given dimensions.
-     */
-    public Topology(int width, int height, boolean toBeStarted){
         setMessageEngine(new MessageEngine());
         setScheduler(new DefaultScheduler());
         setDimensions(width, height);
         clockManager = new ClockManager(this);
-        if (! toBeStarted)
-            clockManager.getClock().pause();
-        isStarted = toBeStarted;
         resetTime();
     }
     /**
-    * Returns the node class corresponding to that name.
-    */
+     * Returns the node class corresponding to that name.
+     */
     public Class<? extends Node> getNodeModel(String modelName){
         return nodeModels.get(modelName);
     }

@@ -43,7 +43,6 @@ public class Topology extends _Properties implements ClockListener{
     Dimension dimensions;
     LinkResolver linkResolver = new LinkResolver();
     Node selectedNode = null;
-    int nbPauses = 0;
     ArrayList<Node> toBeUpdated = new ArrayList<>();
     private boolean step = false;
     private boolean isStarted = false;
@@ -273,23 +272,16 @@ public class Topology extends _Properties implements ClockListener{
      * Pauses the clock (or increments the pause counter).
      */
     public void pause(){
-        if (isStarted) {
-            if (nbPauses == 0)
-                clockManager.getClock().pause();
-            nbPauses++;
-        }
+        if (isStarted)
+            clockManager.pause();
     }
 
     /**
      * Resumes the clock (or decrements the pause counter).
      */
     public void resume(){
-        if (isStarted) {
-            assert (nbPauses > 0);
-            nbPauses--;
-            if (nbPauses == 0)
-                clockManager.getClock().resume();
-        }
+        if (isStarted)
+            clockManager.resume();
     }
 
     /**
@@ -371,8 +363,8 @@ public class Topology extends _Properties implements ClockListener{
      * Performs a single round, then switch to pause state.
      */
     public void step(){
-        if (nbPauses > 0)
-            resume();
+        if (isStarted)
+            clockManager.resume();
         step = true;
     }
     /**

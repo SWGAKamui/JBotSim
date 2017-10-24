@@ -24,6 +24,7 @@ public class ClockManager{
     HashMap<ClockListener, Integer> countdown = new HashMap<>();
     Clock clock;
     Integer time = 0;
+    int nbPauses = 0;
 
     ClockManager(Topology topology){
         this.tp = topology;
@@ -111,5 +112,17 @@ public class ClockManager{
      */
     public void reset(){
         time = 0;
+    }
+
+    public void pause() {
+        if (nbPauses == 0)
+            clock.pause();
+        nbPauses++;
+    }
+
+    public void resume() {
+        nbPauses--;
+        if (nbPauses == 0)
+            clock.resume();
     }
 }

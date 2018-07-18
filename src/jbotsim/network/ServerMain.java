@@ -8,6 +8,17 @@ public class ServerMain {
     public static void main(String[] args) {
         Topology topology = new Topology();
         topology.setDefaultNodeModel(MovingNode.class);
+        topology.addNode(100,100);
+        topology.addNode(100,100);
+        topology.addNode(100,100);
+        topology.addNode(100,100);
+        topology.addNode(100,100);
+        topology.addNode(100,100);
+        topology.addNode(100,100);
+        topology.addNode(100,100);
+        topology.addNode(100,100);
+        topology.addNode(100,100);
+        topology.addNode(100,100);
         topology.start();
 
         JViewer jViewer = new JViewer(topology);

@@ -1,5 +1,6 @@
 package jbotsim.network;
 
+import jbotsim.Color;
 import jbotsim.Node;
 import jbotsim.ui.JViewer;
 
@@ -10,7 +11,11 @@ import java.nio.channels.SocketChannel;
 
 
 public class Client {
-    JViewer jViewer;
+    private JViewer jViewer;
+    private int id;
+    private double x;
+    private double y;
+    private double z;
 
     public Client(JViewer jViewer) {
         this.jViewer = jViewer;
@@ -28,8 +33,7 @@ public class Client {
                 //wait connection
                 System.out.print("*");
             }
-            System.out.println("\n");
-            System.out.println("client is connected : " + client.isConnected());
+            System.out.println("client is connected : " + client.isConnected() + "\n");
 
             while (true) {
                 InputStream inputStream = client.socket().getInputStream();
@@ -51,47 +55,72 @@ public class Client {
     }
 
     private void traitementMessage(String message) {
-        int id = Integer.parseInt(message.substring(message.indexOf("id = ") + 5, message.indexOf(" , x = ") - 1));
-        double x = Double.parseDouble(message.substring(message.indexOf("x = ") + 4, message.indexOf(" , y = ")));
-        double y = Double.parseDouble(message.substring(message.indexOf("y = ") + 4, message.indexOf(" , z = ")));
-        double z = Double.parseDouble(message.substring(message.indexOf("z = ") + 4, message.indexOf("]")));
-
+        String[] lines = message.split("\r\n|\r|\n");
         if (message.contains("move")) {
-            Node n = jViewer.getJTopology().getTopology().findNodeById(id);
-            if (n != null)
-                moveNode(id, x, y, z);
-            else {
-                addNode(id, x, y, z);
+            for (String line : lines) {
+                Node n = jViewer.getJTopology().getTopology().findNodeById(id);
+                if (n != null) {
+                    moveNode(id, x, y, z);
+                } else {
+                    addNode(id, x, y, z);
+                }
+                getProperties(line);
             }
         } else if (message.contains("add")) {
-            addNode(id, x, y, z);
-
+            for (String line : lines) {
+                getProperties(line);
+                addNode(id, x, y, z);
+            }
         } else if (message.contains("del")) {
+            getProperties(message);
             delNode(id);
-        } else if (!message.equals("none")) {
-            System.out.println(message);
+        }else if (message.contains("color")) {
+            colorNode(message);
+        }else if (message.contains("size")) {
+            sizeNode(message);
+        }
+    }
+
+    private void colorNode(String message) {
+        id = Integer.parseInt(message.substring(message.indexOf("id") + 5, message.indexOf(",")).trim());
+        int color= Integer.parseInt(message.substring(message.indexOf(","), message.indexOf("]")).trim());
+
+        jViewer.getJTopology().getTopology().findNodeById(id).setIntColor(color);
+        System.out.println(color);
+    }
+
+    private void sizeNode(String message) {
+        id = Integer.parseInt(message.substring(message.indexOf("id") + 5, message.indexOf(",")).trim());
+        int size= Integer.parseInt(message.substring(message.indexOf(","), message.indexOf("]")).trim());
+        jViewer.getJTopology().getTopology().findNodeById(id).setSize(size);
+    }
+
+
+    private void getProperties(String message) {
+        if (message.contains("[") && message.contains("id") && message.contains("x") && message.contains("y") && message.contains("z") && message.contains("]")) {
+            id = Integer.parseInt(message.substring(message.indexOf("id") + 5, message.indexOf(", x")).trim());
+            x = Double.parseDouble(message.substring(message.indexOf("x") + 3, message.indexOf(", y")).trim());
+            y = Double.parseDouble(message.substring(message.indexOf("y") + 3, message.indexOf(", z")).trim());
+            z = Double.parseDouble(message.substring(message.indexOf("z") + 3, message.indexOf("]")).trim());
         }
     }
 
     private void addNode(int id, double x, double y, double z) {
-        System.out.println("add");
-
-        Node node = new Node();
-        node.setID(id);
-        node.setLocation(x, y, z);
-        jViewer.getJTopology().getTopology().addNode(node);
+        if (jViewer.getJTopology().getTopology().findNodeById(id) == null) {
+            Node node = new Node();
+            node.setID(id);
+            node.setLocation(x, y, z);
+            jViewer.getJTopology().getTopology().addNode(node);
+        }
     }
 
     private void delNode(int id) {
-
         if (jViewer.getJTopology().getTopology().findNodeById(id) != null) {
             jViewer.getJTopology().getTopology().removeNode(jViewer.getJTopology().getTopology().findNodeById(id));
-            System.out.println("del");
         }
     }
 
     private void moveNode(int id, double x, double y, double z) {
-        System.out.println("move");
         jViewer.getJTopology().getTopology().findNodeById(id).setLocation(x, y, z);
     }
 }

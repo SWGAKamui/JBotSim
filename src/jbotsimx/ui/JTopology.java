@@ -9,14 +9,14 @@
  *    Authors:
  *    Arnaud Casteigts        <arnaud.casteigts@labri.fr>
  */
-package jbotsim.ui;
+package jbotsimx.ui;
 
 import jbotsim.Link;
 import jbotsim.Node;
 import jbotsim.Topology;
 import jbotsim._Properties;
 import jbotsim.event.*;
-import jbotsim.ui.painting.*;
+import jbotsimx.ui.painting.*;
 
 import javax.swing.*;
 import java.awt.*;

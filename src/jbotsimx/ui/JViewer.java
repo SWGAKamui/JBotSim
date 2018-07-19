@@ -9,17 +9,11 @@
  *    Authors:
  *    Arnaud Casteigts        <arnaud.casteigts@labri.fr>
  */
-package jbotsim.ui;
+package jbotsimx.ui;
 
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -28,7 +22,7 @@ import javax.swing.event.ChangeListener;
 import jbotsim.Topology;
 import jbotsim._Properties;
 import jbotsim.event.PropertyListener;
-import jbotsimx.format.tikz.Tikz;
+import jbotsimx.format.common.Format;
 
 /**
  * The viewer includes a central jtopology which will draw the attached
@@ -212,12 +206,12 @@ public class JViewer implements CommandListener, ChangeListener, PropertyListene
             JFileChooser fc = new JFileChooser();
             fc.showOpenDialog(jtp.getParent());
             if (fc.getSelectedFile() != null)
-                jtp.topo.fromFile(fc.getSelectedFile().toString());
+                Format.importFromFile(jtp.topo, fc.getSelectedFile().toString());
         } else if (command.equals("Save topology")) {
             JFileChooser fc = new JFileChooser();
             fc.showSaveDialog(jtp.getParent());
             if (fc.getSelectedFile() != null)
-                jtp.topo.toFile(fc.getSelectedFile().toString());
+                Format.exportToFile(jtp.topo, fc.getSelectedFile().toString());
         }
     }
 

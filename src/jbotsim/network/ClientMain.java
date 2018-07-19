@@ -1,7 +1,7 @@
 package jbotsim.network;
 
 import jbotsim.Topology;
-import jbotsim.ui.JViewer;
+import jbotsimx.ui.JViewer;
 
 public class ClientMain {
     public static void main(String[] args) {

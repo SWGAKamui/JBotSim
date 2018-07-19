@@ -2,7 +2,8 @@ package jbotsim.network;
 
 import examples.basic.moving.MovingNode;
 import jbotsim.Topology;
-import jbotsim.ui.JViewer;
+import jbotsimx.ui.JViewer;
+
 
 public class ServerMain {
     public static void main(String[] args) {

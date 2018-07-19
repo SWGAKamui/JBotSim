@@ -1,7 +1,8 @@
 package jbotsim.network;
 
 import jbotsim.Node;
-import jbotsim.ui.JViewer;
+import jbotsimx.ui.JViewer;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
@@ -97,7 +98,6 @@ public class Client {
 
 
     private void getProperties(String message) {
-        System.out.println(message);
         if (message.contains("[") && message.contains("id") && message.contains("x") && message.contains("y") && message.contains("z") && message.contains("]")
                 && !message.contains("sR") && !message.contains("cR") && !message.contains("color") && !message.contains("size")) {
             id = Integer.parseInt(message.substring(message.indexOf("id") + 5, message.indexOf(", x")).trim());

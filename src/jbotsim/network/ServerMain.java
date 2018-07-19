@@ -4,13 +4,15 @@ import examples.basic.broadcasting.BroadcastingNode;
 import examples.basic.helloworld.HelloWorld;
 import examples.basic.mobilebroadcast.Main;
 import examples.basic.mobilebroadcast.MobileBroadcastNode;
+import examples.basic.moving.MovingNode;
 import jbotsim.Topology;
 import jbotsim.ui.JViewer;
 
 public class ServerMain {
     public static void main(String[] args) {
         Topology topology = new Topology();
-        topology.setDefaultNodeModel(BroadcastingNode.class);
+        //topology.setDefaultNodeModel(BroadcastingNode.class);
+        topology.setDefaultNodeModel(MovingNode.class);
 
         deployNodes(topology);
 

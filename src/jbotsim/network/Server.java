@@ -28,10 +28,13 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
     private int nbClientSave = 0;
     private ArrayList<Integer> listIdToSend = new ArrayList<Integer>();
     private List<Node> listNodestoAdd = new ArrayList<>();
+    private double comRange = 100;
+    private double sensRange = 0;
+    private Topology topology;
 
     public Server(Topology topology) {
         listNodestoAdd = topology.getNodes();
-
+        this.topology = topology;
     }
 
     public void run() {
@@ -61,6 +64,12 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
                         ByteBuffer buffer;
                         SocketChannel client = (SocketChannel) myKey.channel();
 
+                        if (comRange != topology.getCommunicationRange() || sensRange != topology.getSensingRange()) {
+                            messageToSendSave = ("[cR : " + topology.getCommunicationRange() + ";" + "sR : " + topology.getSensingRange() + "]");
+                            comRange = topology.getCommunicationRange();
+                            sensRange = topology.getSensingRange();
+
+                        }
 
                         if (!listNodestoAdd.isEmpty()) {
                             messageToSendSave = ("add : [id = " + listNodestoAdd.get(0).getID()
@@ -76,6 +85,7 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
                                 listNodestoAdd.remove(0);
                             }
                         }
+
 
                         if (!messageToSendSave.contains("none")) {
                             message = messageToSendSave.getBytes();
@@ -107,7 +117,7 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
 
     @Override
     public void onNodeAdded(Node node) {
-        if (messageToSend.contains("del") || messageToSend.contains("add") || messageToSend.contains("move"))
+        if (messageToSend.contains("del") || messageToSend.contains("add"))
             messageToSendSave = messageToSend;
         if (nbClient > 0) {
             messageToSend = ("add : [id = " + node.getID() + " , x = " + node.getX() + " , y = " + node.getY() + " , z = " + node.getZ() + "]");
@@ -116,7 +126,7 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
 
     @Override
     public void onNodeRemoved(Node node) {
-        if (messageToSend.contains("del") || messageToSend.contains("add") || messageToSend.contains("move"))
+        if (messageToSend.contains("del") || messageToSend.contains("add"))
             messageToSendSave = messageToSend;
         if (nbClient > 0) {
             messageToSend = ("del : [id = " + node.getID() + " " + " , x = " + node.getX() + " , y = " + node.getY() + " , z = " + node.getZ() + "]");
@@ -126,10 +136,10 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
     @Override
     public void onMove(Node node) {
         if (nbClient > 0) {
-            if (messageToSend.contains("del") || messageToSend.contains("add") || messageToSend.contains("move"))
+            if (messageToSend.contains("del") || messageToSend.contains("add"))
                 messageToSendSave = messageToSend;
             if (!listIdToSend.contains(node.getID())) {
-                if (!messageToSend.equals("none")) {
+                if (!messageToSend.equals("none") && !messageToSend.contains("add") && !messageToSend.contains("del") && !messageToSend.contains("sR") && !messageToSend.contains("cR")) {
                     messageToSend += ("move : [id = " + node.getID() + ", x = " + node.getX() + ", y = " + node.getY() + ", z = " + node.getZ() + "]\n");
                 } else {
                     messageToSend = ("move : [id = " + node.getID() + ", x = " + node.getX() + ", y = " + node.getY() + ", z = " + node.getZ() + "]\n");
@@ -156,9 +166,9 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
                     messageToSend = ("size : [id = " + node.getID() + "," + node.getSize() + "]\n");
                     break;
             }
-        }else{
+        } else {
             messageToSend = ("color : [id = " + 0 + "," + Color.red.toString() + "]\n");
-            System.out.println("ici +"+Color.red.toString());
+            System.out.println("ici +" + Color.red.toString());
         }
     }
 }

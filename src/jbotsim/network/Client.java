@@ -1,6 +1,5 @@
 package jbotsim.network;
 
-import jbotsim.Color;
 import jbotsim.Node;
 import jbotsim.ui.JViewer;
 
@@ -74,16 +73,19 @@ public class Client {
         } else if (message.contains("del")) {
             getProperties(message);
             delNode(id);
-        }else if (message.contains("color")) {
+        } else if (message.contains("color")) {
             colorNode(message);
-        }else if (message.contains("size")) {
+        } else if (message.contains("size")) {
             sizeNode(message);
+        } else if (message.contains("cR") || message.contains("sR")) {
+            jViewer.getJTopology().getTopology().setCommunicationRange(Double.parseDouble(message.substring(message.indexOf(":") + 1, message.indexOf(";")).trim()));
+            jViewer.getJTopology().getTopology().setSensingRange(Double.parseDouble(message.substring(message.indexOf("sR :") + 4, message.indexOf("]")).trim()));
         }
     }
 
     private void colorNode(String message) {
         id = Integer.parseInt(message.substring(message.indexOf("id") + 5, message.indexOf(",")).trim());
-        int color= Integer.parseInt(message.substring(message.indexOf(","), message.indexOf("]")).trim());
+        int color = Integer.parseInt(message.substring(message.indexOf(","), message.indexOf("]")).trim());
 
         jViewer.getJTopology().getTopology().findNodeById(id).setIntColor(color);
         System.out.println(color);
@@ -91,13 +93,15 @@ public class Client {
 
     private void sizeNode(String message) {
         id = Integer.parseInt(message.substring(message.indexOf("id") + 5, message.indexOf(",")).trim());
-        int size= Integer.parseInt(message.substring(message.indexOf(","), message.indexOf("]")).trim());
+        int size = Integer.parseInt(message.substring(message.indexOf(","), message.indexOf("]")).trim());
         jViewer.getJTopology().getTopology().findNodeById(id).setSize(size);
     }
 
 
     private void getProperties(String message) {
-        if (message.contains("[") && message.contains("id") && message.contains("x") && message.contains("y") && message.contains("z") && message.contains("]")) {
+        System.out.println(message);
+        if (message.contains("[") && message.contains("id") && message.contains("x") && message.contains("y") && message.contains("z") && message.contains("]")
+                && !message.contains("sR") && !message.contains("cR") && !message.contains("color") && !message.contains("size")) {
             id = Integer.parseInt(message.substring(message.indexOf("id") + 5, message.indexOf(", x")).trim());
             x = Double.parseDouble(message.substring(message.indexOf("x") + 3, message.indexOf(", y")).trim());
             y = Double.parseDouble(message.substring(message.indexOf("y") + 3, message.indexOf(", z")).trim());

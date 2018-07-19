@@ -1,9 +1,5 @@
 package jbotsim.network;
 
-import examples.basic.broadcasting.BroadcastingNode;
-import examples.basic.helloworld.HelloWorld;
-import examples.basic.mobilebroadcast.Main;
-import examples.basic.mobilebroadcast.MobileBroadcastNode;
 import examples.basic.moving.MovingNode;
 import jbotsim.Topology;
 import jbotsim.ui.JViewer;
@@ -25,6 +21,7 @@ public class ServerMain {
         jViewer.getJTopology().getTopology().addTopologyListener(server);
         server.run();
     }
+
     private static void deployNodes(Topology tp) {
         for (int i = 0; i < 7; i++){
             for (int j = 0; j < 5; j++) {

@@ -11,18 +11,17 @@
  */
 package jbotsim.ui;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-
-import javax.swing.*;
-
 import jbotsim.Link;
 import jbotsim.Node;
 import jbotsim.Topology;
 import jbotsim._Properties;
 import jbotsim.event.*;
 import jbotsim.ui.painting.*;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
 
 
 @SuppressWarnings("serial")
@@ -55,6 +54,10 @@ public class JTopology extends JPanel implements ActionListener {
         linkPainter = new LinkPainter();
         nodePainters.add(new DefaultNodePainter());
         backgroundPainters.add(new DefaultBackgroundPainter());
+    }
+
+    public static void main(String[] args) {
+        new JViewer(new Topology());
     }
 
     public Topology getTopology() {
@@ -328,9 +331,5 @@ public class JTopology extends JPanel implements ActionListener {
         public void keyReleased(KeyEvent e) {
             ctrlPressed = false;
         }
-    }
-
-    public static void main(String[] args) {
-        new JViewer(new Topology());
     }
 }

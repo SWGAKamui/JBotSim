@@ -2,12 +2,10 @@ package jbotsim.network;
 
 import jbotsim.Node;
 import jbotsim.ui.JViewer;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
-
 
 public class Client {
     private JViewer jViewer;

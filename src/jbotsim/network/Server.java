@@ -139,7 +139,9 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
             if (messageToSend.contains("del") || messageToSend.contains("add"))
                 messageToSendSave = messageToSend;
             if (!listIdToSend.contains(node.getID())) {
-                if (!messageToSend.equals("none") && !messageToSend.contains("add") && !messageToSend.contains("del") && !messageToSend.contains("sR") && !messageToSend.contains("cR")) {
+                if (!messageToSend.equals("none") && !messageToSend.contains("add")
+                        && !messageToSend.contains("del") && !messageToSend.contains("sR")
+                        && !messageToSend.contains("cR")) {
                     messageToSend += ("move : [id = " + node.getID() + ", x = " + node.getX() + ", y = " + node.getY() + ", z = " + node.getZ() + "]\n");
                 } else {
                     messageToSend = ("move : [id = " + node.getID() + ", x = " + node.getX() + ", y = " + node.getY() + ", z = " + node.getZ() + "]\n");

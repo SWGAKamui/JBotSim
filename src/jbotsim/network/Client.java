@@ -98,12 +98,16 @@ public class Client {
 
 
     private void getProperties(String message) {
-        if (message.contains("[") && message.contains("id") && message.contains("x") && message.contains("y") && message.contains("z") && message.contains("]")
-                && !message.contains("sR") && !message.contains("cR") && !message.contains("color") && !message.contains("size")) {
-            id = Integer.parseInt(message.substring(message.indexOf("id") + 5, message.indexOf(", x")).trim());
-            x = Double.parseDouble(message.substring(message.indexOf("x") + 3, message.indexOf(", y")).trim());
-            y = Double.parseDouble(message.substring(message.indexOf("y") + 3, message.indexOf(", z")).trim());
-            z = Double.parseDouble(message.substring(message.indexOf("z") + 3, message.indexOf("]")).trim());
+        try {
+            if (message.contains("[") && message.contains("id") && message.contains("x") && message.contains("y") && message.contains("z") && message.contains("]")
+                    && !message.contains("sR") && !message.contains("cR") && !message.contains("color") && !message.contains("size")) {
+                id = Integer.parseInt(message.substring(message.indexOf("id") + 5, message.indexOf(", x")).trim());
+                x = Double.parseDouble(message.substring(message.indexOf("x") + 3, message.indexOf(", y")).trim());
+                y = Double.parseDouble(message.substring(message.indexOf("y") + 3, message.indexOf(", z")).trim());
+                z = Double.parseDouble(message.substring(message.indexOf("z") + 3, message.indexOf("]")).trim());
+            }
+        }catch(StringIndexOutOfBoundsException ignored){
+
         }
     }
 

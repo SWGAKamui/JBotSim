@@ -23,11 +23,10 @@ import java.util.Set;
 public class Server implements MovementListener, TopologyListener, PropertyListener {
     private String messageToSend = "none";
     private String messageToSendSave = "none";
-
     private int nbClient = 0;
     private int nbClientSave = 0;
-    private ArrayList<Integer> listIdToSend = new ArrayList<Integer>();
-    private List<Node> listNodestoAdd = new ArrayList<>();
+    private ArrayList<Integer> listIdToSend = new ArrayList<>();
+    private List<Node> listNodestoAdd;
     private double comRange = 100;
     private double sensRange = 0;
     private Topology topology;
@@ -70,7 +69,6 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
                             sensRange = topology.getSensingRange();
 
                         }
-
                         if (!listNodestoAdd.isEmpty()) {
                             messageToSendSave = ("add : [id = " + listNodestoAdd.get(0).getID()
                                     + " , x = " + listNodestoAdd.get(0).getX()
@@ -85,8 +83,6 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
                                 listNodestoAdd.remove(0);
                             }
                         }
-
-
                         if (!messageToSendSave.contains("none")) {
                             message = messageToSendSave.getBytes();
                             buffer = ByteBuffer.wrap(message);
@@ -99,7 +95,6 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
                             if (messageToSend.contains("move"))
                                 listIdToSend.clear();
                             messageToSend = "none";
-
                         }
                     }
                     Thread.sleep(30);

@@ -27,7 +27,7 @@ public class Client {
             System.out.println("Clients try to connect ****");
             byte[] address = {(byte)147, (byte)210, (byte) 128, (byte) 206};
             InetAddress ip = InetAddress.getByAddress(address);
-            SocketChannel client = SocketChannel.open(new InetSocketAddress(ip, 1111));
+            SocketChannel client = SocketChannel.open(new InetSocketAddress(ip, 80));
             //client.configureBlocking(false);
             client.socket().setTcpNoDelay(true);
 

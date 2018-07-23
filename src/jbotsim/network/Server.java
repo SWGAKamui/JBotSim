@@ -40,9 +40,9 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
     public void run() {
         try {
             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-            byte[] address = {(byte)147, (byte)210, (byte) 128, (byte) 206};
+            byte[] address = {(byte)192, (byte)168, (byte) 0, (byte) 123};
             InetAddress ip = InetAddress.getByAddress(address);
-            serverSocketChannel.bind(new InetSocketAddress(ip, 1111));
+            serverSocketChannel.bind(new InetSocketAddress(ip, 80));
             serverSocketChannel.configureBlocking(false);
 
             Selector selector = Selector.open();

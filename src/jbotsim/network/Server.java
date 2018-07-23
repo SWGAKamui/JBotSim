@@ -9,6 +9,7 @@ import jbotsim.event.PropertyListener;
 import jbotsim.event.TopologyListener;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -39,7 +40,9 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
     public void run() {
         try {
             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-            serverSocketChannel.bind(new InetSocketAddress("localhost", 1111));
+            byte[] address = {(byte)147, (byte)210, (byte) 128, (byte) 206};
+            InetAddress ip = InetAddress.getByAddress(address);
+            serverSocketChannel.bind(new InetSocketAddress(ip, 1111));
             serverSocketChannel.configureBlocking(false);
 
             Selector selector = Selector.open();

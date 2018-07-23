@@ -5,6 +5,7 @@ import jbotsimx.ui.JViewer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 
@@ -22,7 +23,11 @@ public class Client {
 
     public void run() {
         try {
-            SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", 1111));
+            //SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", 1111));
+            System.out.println("Clients try to connect ****");
+            byte[] address = {(byte)147, (byte)210, (byte) 128, (byte) 206};
+            InetAddress ip = InetAddress.getByAddress(address);
+            SocketChannel client = SocketChannel.open(new InetSocketAddress(ip, 1111));
             //client.configureBlocking(false);
             client.socket().setTcpNoDelay(true);
 

@@ -1,4 +1,4 @@
-package jbotsim.network;
+package jbotsimx.network;
 
 import jbotsim.Color;
 import jbotsim.Node;
@@ -42,24 +42,11 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
         this.topology = topology;
     }
 
-    public void parseIntIP(String serverIp) {
-        ip1 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
-        serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
-
-        ip2 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
-        serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
-
-        ip3 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
-        serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
-
-        ip4 = Integer.parseInt(serverIp);
-    }
-
     public void run(String serverIp) {
         try {
             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
 
-            parseIntIP(serverIp);
+            StringGestion.parseIntIP(serverIp, ip1, ip2, ip3, ip4);
 
             byte[] address = {(byte) ip1, (byte) ip2, (byte) ip3, (byte) ip4};
             InetAddress ip = InetAddress.getByAddress(address);

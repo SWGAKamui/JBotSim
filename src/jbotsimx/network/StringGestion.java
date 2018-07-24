@@ -1,30 +1,16 @@
-package jbotsim.network;
+package jbotsimx.network;
 
 import jbotsim.Node;
 import jbotsimx.ui.JViewer;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.nio.channels.SocketChannel;
-
-public class Client {
-    private JViewer jViewer;
-    private int id;
-    private double x;
-    private double y;
-    private double z;
-    private int ip1;
-    private int ip2;
-    private int ip3;
-    private int ip4;
-
-    public Client(JViewer jViewer) {
+public class StringGestion {
+    JViewer jViewer;
+    int id = 0;
+    double x,y,z = 0;
+    public StringGestion(JViewer jViewer){
         this.jViewer = jViewer;
     }
-
-    public void parseIntIP(String serverIp) {
+    public static void parseIntIP(String serverIp, int ip1, int ip2, int ip3, int ip4) {
         ip1 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
         serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
 
@@ -37,55 +23,18 @@ public class Client {
         ip4 = Integer.parseInt(serverIp);
     }
 
-    public void run(String serverIp) {
-        try {
-            //SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", 1111));
-            System.out.println("Clients try to connect ****");
-            parseIntIP(serverIp);
-            byte[] address = {(byte)ip1, (byte)ip2, (byte) ip3, (byte) ip4};
-            InetAddress ip = InetAddress.getByAddress(address);
-            //SocketChannel client = SocketChannel.open(new InetSocketAddress(ip, 51423));
-            SocketChannel client = SocketChannel.open(new InetSocketAddress(ip, 7777));
-            //client.configureBlocking(false);
-            client.socket().setTcpNoDelay(true);
-
-            System.out.println("Waiting for connection ***");
-            while (!client.finishConnect()) {
-                //wait connection
-                System.out.print("*");
-            }
-            System.out.println("client is connected : " + client.isConnected() + "\n");
-
-            while (true) {
-                InputStream inputStream = client.socket().getInputStream();
-
-                byte[] bytes = new byte[1024];
-
-                int readCount = inputStream.read(bytes);
-
-                String message = new String(bytes).trim();
-                if (readCount > 0) {
-                    if (!message.contains("none")) {
-                        traitementMessage(message);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void traitementMessage(String message) {
+    public void traitementMessage(String message) {
         String[] lines = message.split("\r\n|\r|\n");
         if (message.contains("move")) {
             for (String line : lines) {
+                getProperties(line);
                 Node n = jViewer.getJTopology().getTopology().findNodeById(id);
                 if (n != null) {
                     moveNode(id, x, y, z);
                 } else {
                     addNode(id, x, y, z);
                 }
-                getProperties(line);
+                //getProperties(message);
             }
         } else if (message.contains("add")) {
             for (String line : lines) {
@@ -129,7 +78,7 @@ public class Client {
                 y = Double.parseDouble(message.substring(message.indexOf("y") + 3, message.indexOf(", z")).trim());
                 z = Double.parseDouble(message.substring(message.indexOf("z") + 3, message.indexOf("]")).trim());
             }
-        }catch(StringIndexOutOfBoundsException ignored){
+        } catch (StringIndexOutOfBoundsException ignored) {
 
         }
     }

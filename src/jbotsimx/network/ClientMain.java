@@ -1,4 +1,4 @@
-package jbotsim.network;
+package jbotsimx.network;
 
 import jbotsim.Topology;
 import jbotsimx.ui.JViewer;

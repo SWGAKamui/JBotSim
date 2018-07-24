@@ -1,4 +1,4 @@
-package jbotsim.network;
+package jbotsimx.network;
 
 import examples.basic.moving.MovingNode;
 import jbotsim.Topology;

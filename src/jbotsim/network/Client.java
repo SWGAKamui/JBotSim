@@ -15,19 +15,37 @@ public class Client {
     private double x;
     private double y;
     private double z;
+    private int ip1;
+    private int ip2;
+    private int ip3;
+    private int ip4;
 
     public Client(JViewer jViewer) {
         this.jViewer = jViewer;
     }
 
+    public void parseIntIP(String serverIp) {
+        ip1 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
+        serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
 
-    public void run() {
+        ip2 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
+        serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
+
+        ip3 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
+        serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
+
+        ip4 = Integer.parseInt(serverIp);
+    }
+
+    public void run(String serverIp) {
         try {
             //SocketChannel client = SocketChannel.open(new InetSocketAddress("localhost", 1111));
             System.out.println("Clients try to connect ****");
-            byte[] address = {(byte)147, (byte)210, (byte) 128, (byte) 206};
+            parseIntIP(serverIp);
+            byte[] address = {(byte)ip1, (byte)ip2, (byte) ip3, (byte) ip4};
             InetAddress ip = InetAddress.getByAddress(address);
-            SocketChannel client = SocketChannel.open(new InetSocketAddress(ip, 80));
+            //SocketChannel client = SocketChannel.open(new InetSocketAddress(ip, 51423));
+            SocketChannel client = SocketChannel.open(new InetSocketAddress(ip, 7777));
             //client.configureBlocking(false);
             client.socket().setTcpNoDelay(true);
 

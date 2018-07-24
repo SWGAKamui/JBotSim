@@ -7,6 +7,11 @@ import jbotsimx.ui.JViewer;
 
 public class ServerMain {
     public static void main(String[] args) {
+        if(args.length != 1){
+            System.out.println("USAGE : Server IP");
+            System.exit(0);
+        }
+        System.out.println("Server IP : "+args[0]);
         Topology topology = new Topology();
         //topology.setDefaultNodeModel(BroadcastingNode.class);
         topology.setDefaultNodeModel(MovingNode.class);
@@ -20,7 +25,7 @@ public class ServerMain {
         Server server = new Server(topology);
         jViewer.getJTopology().getTopology().addMovementListener(server);
         jViewer.getJTopology().getTopology().addTopologyListener(server);
-        server.run();
+        server.run(args[0]);
     }
 
     private static void deployNodes(Topology tp) {
@@ -30,5 +35,4 @@ public class ServerMain {
             }
         }
     }
-
 }

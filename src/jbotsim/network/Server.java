@@ -32,17 +32,39 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
     private double sensRange = 0;
     private Topology topology;
 
+    private int ip1;
+    private int ip2;
+    private int ip3;
+    private int ip4;
+
     public Server(Topology topology) {
         listNodestoAdd = topology.getNodes();
         this.topology = topology;
     }
 
-    public void run() {
+    public void parseIntIP(String serverIp) {
+        ip1 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
+        serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
+
+        ip2 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
+        serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
+
+        ip3 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
+        serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
+
+        ip4 = Integer.parseInt(serverIp);
+    }
+
+    public void run(String serverIp) {
         try {
             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-            byte[] address = {(byte)192, (byte)168, (byte) 0, (byte) 123};
+
+            parseIntIP(serverIp);
+
+            byte[] address = {(byte) ip1, (byte) ip2, (byte) ip3, (byte) ip4};
             InetAddress ip = InetAddress.getByAddress(address);
-            serverSocketChannel.bind(new InetSocketAddress(ip, 80));
+
+            serverSocketChannel.bind(new InetSocketAddress(ip, 7777));
             serverSocketChannel.configureBlocking(false);
 
             Selector selector = Selector.open();

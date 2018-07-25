@@ -1,26 +1,28 @@
 package jbotsimx.network;
 
 import jbotsim.Node;
+import jbotsim.Topology;
 import jbotsimx.ui.JViewer;
 
 public class StringGestion {
-    JViewer jViewer;
+    Topology topology;
     int id = 0;
     double x,y,z = 0;
-    public StringGestion(JViewer jViewer){
-        this.jViewer = jViewer;
+    public StringGestion(Topology topology){
+        this.topology = topology;
     }
-    public static void parseIntIP(String serverIp, int ip1, int ip2, int ip3, int ip4) {
-        ip1 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
+
+    public static void parseIntIP(String serverIp, IP ip) {
+        ip.ip1 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
         serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
 
-        ip2 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
+        ip.ip2 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
         serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
 
-        ip3 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
+        ip.ip3 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
         serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
 
-        ip4 = Integer.parseInt(serverIp);
+        ip.ip4 = Integer.parseInt(serverIp);
     }
 
     public void traitementMessage(String message) {
@@ -28,7 +30,7 @@ public class StringGestion {
         if (message.contains("move")) {
             for (String line : lines) {
                 getProperties(line);
-                Node n = jViewer.getJTopology().getTopology().findNodeById(id);
+                Node n = topology.findNodeById(id);
                 if (n != null) {
                     moveNode(id, x, y, z);
                 } else {
@@ -49,8 +51,8 @@ public class StringGestion {
         } else if (message.contains("size")) {
             sizeNode(message);
         } else if (message.contains("cR") || message.contains("sR")) {
-            jViewer.getJTopology().getTopology().setCommunicationRange(Double.parseDouble(message.substring(message.indexOf(":") + 1, message.indexOf(";")).trim()));
-            jViewer.getJTopology().getTopology().setSensingRange(Double.parseDouble(message.substring(message.indexOf("sR :") + 4, message.indexOf("]")).trim()));
+            topology.setCommunicationRange(Double.parseDouble(message.substring(message.indexOf(":") + 1, message.indexOf(";")).trim()));
+            topology.setSensingRange(Double.parseDouble(message.substring(message.indexOf("sR :") + 4, message.indexOf("]")).trim()));
         }
     }
 
@@ -58,14 +60,14 @@ public class StringGestion {
         id = Integer.parseInt(message.substring(message.indexOf("id") + 5, message.indexOf(",")).trim());
         int color = Integer.parseInt(message.substring(message.indexOf(","), message.indexOf("]")).trim());
 
-        jViewer.getJTopology().getTopology().findNodeById(id).setIntColor(color);
+        topology.findNodeById(id).setIntColor(color);
         System.out.println(color);
     }
 
     private void sizeNode(String message) {
         id = Integer.parseInt(message.substring(message.indexOf("id") + 5, message.indexOf(",")).trim());
         int size = Integer.parseInt(message.substring(message.indexOf(","), message.indexOf("]")).trim());
-        jViewer.getJTopology().getTopology().findNodeById(id).setSize(size);
+        topology.findNodeById(id).setSize(size);
     }
 
 
@@ -84,21 +86,21 @@ public class StringGestion {
     }
 
     private void addNode(int id, double x, double y, double z) {
-        if (jViewer.getJTopology().getTopology().findNodeById(id) == null) {
+        if (topology.findNodeById(id) == null) {
             Node node = new Node();
             node.setID(id);
             node.setLocation(x, y, z);
-            jViewer.getJTopology().getTopology().addNode(node);
+            topology.addNode(node);
         }
     }
 
     private void delNode(int id) {
-        if (jViewer.getJTopology().getTopology().findNodeById(id) != null) {
-            jViewer.getJTopology().getTopology().removeNode(jViewer.getJTopology().getTopology().findNodeById(id));
+        if (topology.findNodeById(id) != null) {
+            topology.removeNode(topology.findNodeById(id));
         }
     }
 
     private void moveNode(int id, double x, double y, double z) {
-        jViewer.getJTopology().getTopology().findNodeById(id).setLocation(x, y, z);
+        topology.findNodeById(id).setLocation(x, y, z);
     }
 }

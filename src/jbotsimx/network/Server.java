@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Set;
 
 public class Server implements MovementListener, TopologyListener, PropertyListener {
+    ServerSocketChannel serverSocketChannel;
+    private Topology topology;
     private String messageToSend = "none";
     private String messageToSendSave = "none";
     private int nbClient = 0;
@@ -30,36 +32,39 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
     private List<Node> listNodestoAdd;
     private double comRange = 100;
     private double sensRange = 0;
-    private Topology topology;
-
-    private int ip1;
-    private int ip2;
-    private int ip3;
-    private int ip4;
+    private Boolean exception = false;
+    private Boolean hasCreatedServer = false;
 
     public Server(Topology topology) {
         listNodestoAdd = topology.getNodes();
         this.topology = topology;
     }
+    public int getNbClientSave(){
+        return nbClientSave;
+    }
 
-    public void run(String serverIp) {
+    public void run(String serverIp, int port) {
         try {
-            ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-
-            StringGestion.parseIntIP(serverIp, ip1, ip2, ip3, ip4);
-
-            byte[] address = {(byte) ip1, (byte) ip2, (byte) ip3, (byte) ip4};
-            InetAddress ip = InetAddress.getByAddress(address);
-
-            serverSocketChannel.bind(new InetSocketAddress(ip, 7777));
+            serverSocketChannel = ServerSocketChannel.open();
             serverSocketChannel.configureBlocking(false);
+            serverSocketChannel.socket().setReuseAddress(true);
+
+            IP ip = new IP();
+            StringGestion.parseIntIP(serverIp, ip);
+
+            byte[] address = {(byte) ip.ip1, (byte) ip.ip2, (byte) ip.ip3, (byte) ip.ip4};
+            InetAddress ipAdd = InetAddress.getByAddress(address);
+
+            serverSocketChannel.bind(new InetSocketAddress(ipAdd, port));
 
             Selector selector = Selector.open();
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
             System.out.println("Server is created");
 
-            while (true) {
-                selector.select();
+            while (!exception) {
+                hasCreatedServer = true;
+                selector.selectNow();
+
                 Set<SelectionKey> Keys = selector.selectedKeys();
                 Iterator<SelectionKey> iterator = Keys.iterator();
                 while (iterator.hasNext()) {
@@ -116,8 +121,10 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
                     nbClientSave = nbClient;
                     System.out.println("Number of person connected : " + nbClient);
                 }
+
             }
-        } catch (IOException | InterruptedException e) {
+
+        } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -179,5 +186,18 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
             messageToSend = ("color : [id = " + 0 + "," + Color.red.toString() + "]\n");
             System.out.println("ici +" + Color.red.toString());
         }
+    }
+
+    public Topology getTopology() {
+        return topology;
+    }
+
+    public boolean isCreated() {
+        return hasCreatedServer;
+    }
+
+    public void close() {
+        exception = true;
+        System.out.println("server is closed");
     }
 }

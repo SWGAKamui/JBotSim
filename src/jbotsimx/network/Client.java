@@ -1,42 +1,37 @@
 package jbotsimx.network;
 
+import jbotsim.Topology;
 import jbotsimx.ui.JViewer;
-import test.TestNetwork;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.SocketChannel;
 
 public class Client {
 
-    private JViewer jViewer;
-
-    private int id;
-    private double x;
-    private double y;
-    private double z;
-
-    private int ip1;
-    private int ip2;
-    private int ip3;
-    private int ip4;
-
+private Topology topology;
+    private SocketChannel client;
+    private Boolean hasStarted = false;
+    private IP ip = new IP();
     private StringGestion stringGestion;
 
-    public Client(JViewer jViewer) {
-        this.jViewer = jViewer;
-        stringGestion = new StringGestion(this.jViewer);
+    public Client(Topology topology) {
+        this.topology = topology;
+        stringGestion = new StringGestion(topology);
     }
 
-    public void run(String serverIp) {
+    public void run(String serverIp, int port) {
         try {
             System.out.println("Clients try to connect ****");
-            StringGestion.parseIntIP(serverIp, ip1, ip2, ip3, ip4);
-            byte[] address = {(byte) ip1, (byte) ip2, (byte) ip3, (byte) ip4};
+
+            StringGestion.parseIntIP(serverIp, ip);
+            byte[] address = {(byte) ip.ip1, (byte) ip.ip2, (byte) ip.ip3, (byte) ip.ip4};
             InetAddress ip = InetAddress.getByAddress(address);
-            SocketChannel client = SocketChannel.open(new InetSocketAddress(ip, 7777));
+
+            client = SocketChannel.open(new InetSocketAddress(ip, port));
             client.socket().setTcpNoDelay(true);
 
             System.out.println("Waiting for connection ***");
@@ -46,7 +41,12 @@ public class Client {
             }
 
             System.out.println("client is connected : " + client.isConnected() + "\n");
-            while (true) {
+
+
+            if (client.isConnected())
+                hasStarted = client.isConnected();
+
+            while (client.isConnected()) {
                 InputStream inputStream = client.socket().getInputStream();
                 byte[] bytes = new byte[1024];
                 int readCount = inputStream.read(bytes);
@@ -57,6 +57,28 @@ public class Client {
                     }
                 }
             }
+            client.close();
+            System.out.println("client is closed");
+        } catch (AsynchronousCloseException e){
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Topology getTopology() {
+        return topology;
+    }
+
+    public boolean isCreated() {
+        return hasStarted;
+    }
+
+    public void close() {
+        try {
+            client.socket().close();
+            client.close();
+            System.out.println("client is closed");
         } catch (IOException e) {
             e.printStackTrace();
         }

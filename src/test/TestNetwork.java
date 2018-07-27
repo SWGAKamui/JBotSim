@@ -172,10 +172,9 @@ public class TestNetwork {
     }
 
     @Test
-    @DisplayName("Multi Client")
+    @DisplayName("Multi Client connection")
     public void testMultiClient() {
         TestServer server = new TestServer("127.0.0.1", 7779);
-        deployNodes(server.topology);
         TestClient client = new TestClient("127.0.0.1", 7779);
         TestClient client2 = new TestClient("127.0.0.1", 7779);
         TestClient client3 = new TestClient("127.0.0.1", 7779);
@@ -207,10 +206,60 @@ public class TestNetwork {
             public void run() {
                 server.server.close();
             }
-        }, 1000);
+        }, 500);
 
         server.run();
 
         assertEquals(3, server.server.getNbClientSave());
+    }
+
+    @Test
+    @DisplayName("Multi Client Receive node")
+    public void testMultiClientSendNode() {
+        TestServer server = new TestServer("127.0.0.1", 7775);
+        TestClient client = new TestClient("127.0.0.1", 7775);
+        TestClient client2 = new TestClient("127.0.0.1", 7775);
+        TestClient client3 = new TestClient("127.0.0.1", 7775);
+        deployNodes(server.topology);
+        Timer t1 = new Timer();
+        t1.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                client.run();
+            }
+        }, 100);
+        Timer t3 = new Timer();
+        t3.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                client2.run();
+            }
+        }, 100);
+
+        Timer t2 = new Timer();
+        t2.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                client3.run();
+            }
+        }, 100);
+        Timer t4 = new Timer();
+        t4.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                server.server.close();
+            }
+        }, 500);
+
+        server.run();
+        assertAll("Multi Client receving",
+                () -> assertEquals(server.server.getTopology().getNodes().size(),client.client.getTopology().getNodes().size()),
+                () -> assertEquals(server.server.getTopology().getNodes().size(),client2.client.getTopology().getNodes().size()),
+                () -> assertEquals(server.server.getTopology().getNodes().size(),client3.client.getTopology().getNodes().size())
+        );
+        System.out.println(server.server.getTopology().getNodes().size()+" "+client.client.getTopology().getNodes().size()
+                +" "+client2.client.getTopology().getNodes().size()
+                +" "+client3.client.getTopology().getNodes().size());
+
     }
 }

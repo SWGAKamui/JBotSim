@@ -260,6 +260,5 @@ public class TestNetwork {
         System.out.println(server.server.getTopology().getNodes().size()+" "+client.client.getTopology().getNodes().size()
                 +" "+client2.client.getTopology().getNodes().size()
                 +" "+client3.client.getTopology().getNodes().size());
-
     }
 }

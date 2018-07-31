@@ -13,16 +13,20 @@ public class StringGestion {
     }
 
     public static void parseIntIP(String serverIp, IP ip) {
-        ip.ip1 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
-        serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
+        try {
+            ip.ip1 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
+            serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
 
-        ip.ip2 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
-        serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
+            ip.ip2 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
+            serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
 
-        ip.ip3 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
-        serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
+            ip.ip3 = Integer.parseInt(serverIp.substring(0, serverIp.indexOf(".")));
+            serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
 
-        ip.ip4 = Integer.parseInt(serverIp);
+            ip.ip4 = Integer.parseInt(serverIp);
+        }catch (Exception e){
+            System.out.println("USAGE : \n IP :  x.x.x.x port : x");
+        }
     }
 
     public void traitementMessage(String message) {

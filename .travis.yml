@@ -1,5 +1,0 @@
-language: java
-script: cd src && make
-jdk:
-  - openjdk8
-  - oraclejdk8

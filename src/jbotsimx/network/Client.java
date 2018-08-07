@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.SocketChannel;
 
@@ -52,8 +53,19 @@ private Topology topology;
                 int readCount = inputStream.read(bytes);
                 String message = new String(bytes).trim();
                 if (readCount > 0) {
-                    if (!message.contains("none")) {
-                        stringGestion.traitementMessage(message);
+                    if (readCount > 0) {
+                        if (!message.contains("none") && (message.contains("del") || message.contains("add")|| message.contains("move") )
+                                && message.contains("[id = ")&& message.contains(", x = ")&& message.contains(", y = ")&& message.contains(", z = ") && message.contains("]")) {
+                            stringGestion.traitementMessage(message);
+                            client.write(ByteBuffer.wrap("ok".getBytes()));
+                        }
+                        else if(!message.contains("none") && message.contains("[cR : ") && message.contains(";")&& message.contains("sR : ")&& message.contains("]")){
+                            stringGestion.traitementMessage(message);
+                            client.write(ByteBuffer.wrap("ok".getBytes()));
+                        }
+                        else{
+                            client.write(ByteBuffer.wrap("not ok".getBytes()));
+                        }
                     }
                 }
             }

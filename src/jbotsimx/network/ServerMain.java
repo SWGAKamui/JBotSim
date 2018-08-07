@@ -1,5 +1,6 @@
 package jbotsimx.network;
 
+import examples.basic.moving.MovingNode;
 import jbotsim.Topology;
 import jbotsimx.ui.JViewer;
 
@@ -13,6 +14,8 @@ public class ServerMain {
         System.out.println("Server IP : "+args[0]);
         Topology topology = new Topology();
 
+
+        topology.setDefaultNodeModel(MovingNode.class);
         JViewer jViewer = new JViewer(topology);
         jViewer.setTitle("Server");
         topology.start();

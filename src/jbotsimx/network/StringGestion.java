@@ -30,6 +30,7 @@ public class StringGestion {
     }
 
     public void traitementMessage(String message) {
+        topology.pause();
         String[] lines = message.split("\r\n|\r|\n");
         if (message.contains("move")) {
             for (String line : lines) {
@@ -58,6 +59,7 @@ public class StringGestion {
             topology.setCommunicationRange(Double.parseDouble(message.substring(message.indexOf(":") + 1, message.indexOf(";")).trim()));
             topology.setSensingRange(Double.parseDouble(message.substring(message.indexOf("sR :") + 4, message.indexOf("]")).trim()));
         }
+        topology.resume();
     }
 
     private void colorNode(String message) {

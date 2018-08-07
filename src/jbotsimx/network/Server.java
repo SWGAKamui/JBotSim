@@ -9,6 +9,7 @@ import jbotsim.event.PropertyListener;
 import jbotsim.event.TopologyListener;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -114,6 +115,32 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
                             messageToSend = "none";
                         }
                     }
+
+                    if (myKey.isReadable()) {
+                        SocketChannel client = serverSocketChannel.accept();
+                        nbClient++;
+                        client.configureBlocking(false);
+
+                        client.register(selector, SelectionKey.OP_READ);
+                        System.out.println("ici");
+                    } else if (myKey.isReadable()) {
+                        byte[] message;
+                        ByteBuffer buffer;
+                        SocketChannel client = (SocketChannel) myKey.channel();
+                        InputStream inputStream = client.socket().getInputStream();
+                        byte[] bytes = new byte[1024];
+                        int readCount = inputStream.read(bytes);
+                        String receive = new String(bytes).trim();
+                        if (readCount > 0) {
+                            if (!receive.contains("ok")) {
+                                message = messageToSend.getBytes();
+                                buffer = ByteBuffer.wrap(message);
+                                client.write(buffer);
+                                messageToSend = "none";
+                            }
+                        }
+                    }
+
                     Thread.sleep(30);
                     iterator.remove();
                 }

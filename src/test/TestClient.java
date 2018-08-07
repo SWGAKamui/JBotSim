@@ -1,13 +1,13 @@
 package test;
 
 import jbotsim.Topology;
-import jbotsimx.network.Client;
+import jbotsimx.network.ClientUDP;
 
 public class TestClient {
     private final int port;
     private final String ip;
     Topology topology;
-    Client client;
+    ClientUDP client;
 
     private static void deployNodes(Topology tp) {
         for (int i = 0; i < 7; i++) {
@@ -25,7 +25,7 @@ public class TestClient {
     public void run() {
         this.topology = new Topology();
         deployNodes(topology);
-        client = new Client(topology);
+        client = new ClientUDP(topology);
         client.run(ip, port);
     }
 }

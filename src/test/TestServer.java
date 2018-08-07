@@ -1,13 +1,13 @@
 package test;
 
 import jbotsim.Topology;
-import jbotsimx.network.Server;
+import jbotsimx.network.ServerUDP;
 
 public class TestServer {
     private final int port;
     private final String ip;
     public Topology topology = new Topology();
-    Server server;
+    ServerUDP server;
 
     public TestServer(String ip, int port) {
         this.ip = ip;
@@ -16,7 +16,7 @@ public class TestServer {
 
 
     public void run() {
-        server = new Server(topology);
+        server = new ServerUDP(topology);
         server.run(ip, port);
     }
 }

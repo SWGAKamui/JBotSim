@@ -1,7 +1,6 @@
 package jbotsimx.network;
 
 import jbotsim.Topology;
-import jbotsimx.ui.JViewer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,22 +9,23 @@ import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.SocketChannel;
 
-public class Client {
+@SuppressWarnings("Duplicates")
+public class ClientUDP {
 
-private Topology topology;
+    private Topology topology;
     private SocketChannel client;
     private Boolean hasStarted = false;
     private IP ip = new IP();
     private StringGestion stringGestion;
 
-    public Client(Topology topology) {
+    public ClientUDP(Topology topology) {
         this.topology = topology;
         stringGestion = new StringGestion(topology);
     }
 
     public void run(String serverIp, int port) {
         try {
-            System.out.println("Clients try to connect ****");
+            System.out.print("****");
 
             StringGestion.parseIntIP(serverIp, ip);
             byte[] address = {(byte) ip.ip1, (byte) ip.ip2, (byte) ip.ip3, (byte) ip.ip4};
@@ -34,14 +34,12 @@ private Topology topology;
             client = SocketChannel.open(new InetSocketAddress(ip, port));
             client.socket().setTcpNoDelay(true);
 
-            System.out.println("Waiting for connection ***");
+            System.out.print("***");
             while (!client.finishConnect()) {
                 //wait connection
                 System.out.print("*");
             }
-
-            System.out.println("client is connected : " + client.isConnected() + "\n");
-
+            System.out.println("......");
 
             if (client.isConnected())
                 hasStarted = client.isConnected();
@@ -52,15 +50,14 @@ private Topology topology;
                 int readCount = inputStream.read(bytes);
                 String message = new String(bytes).trim();
                 if (readCount > 0) {
-                    if (!message.contains("none")) {
+                    if (!message.contains("none") && message.contains("move")
+                            && message.contains("[id = ")&& message.contains(", x = ")&& message.contains(", y = ")&& message.contains(", z = ") && message.contains("]")) {
                         stringGestion.traitementMessage(message);
                     }
                 }
             }
             client.close();
             System.out.println("client is closed");
-        } catch (AsynchronousCloseException e){
-
         } catch (IOException e) {
             e.printStackTrace();
         }

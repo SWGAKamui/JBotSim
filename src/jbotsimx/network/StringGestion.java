@@ -4,11 +4,14 @@ import jbotsim.Node;
 import jbotsim.Topology;
 import jbotsimx.ui.JViewer;
 
+import java.util.ConcurrentModificationException;
+
 public class StringGestion {
-    Topology topology;
+    volatile Topology topology;
     int id = 0;
-    double x,y,z = 0;
-    public StringGestion(Topology topology){
+    double x, y, z = 0;
+
+    public StringGestion(Topology topology) {
         this.topology = topology;
     }
 
@@ -24,40 +27,46 @@ public class StringGestion {
             serverIp = serverIp.substring(serverIp.indexOf(".") + 1, serverIp.length());
 
             ip.ip4 = Integer.parseInt(serverIp);
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("USAGE : \n IP :  x.x.x.x port : x");
         }
     }
 
     public void traitementMessage(String message) {
-        String[] lines = message.split("\r\n|\r|\n");
-        if (message.contains("move")) {
-            for (String line : lines) {
-                getProperties(line);
-                Node n = topology.findNodeById(id);
-                if (n != null) {
-                    moveNode(id, x, y, z);
-                } else {
+        topology.pause();
+        try {
+
+            String[] lines = message.split("\r\n|\r|\n");
+            if (message.contains("move")) {
+                for (String line : lines) {
+                    getProperties(line);
+                    Node n = topology.findNodeById(id);
+                    if (n != null) {
+                        moveNode(id, x, y, z);
+                    } else {
+                        addNode(id, x, y, z);
+                    }
+                }
+            } else if (message.contains("add")) {
+                for (String line : lines) {
+                    getProperties(line);
                     addNode(id, x, y, z);
                 }
-                //getProperties(message);
+            } else if (message.contains("del")) {
+                getProperties(message);
+                delNode(id);
+            } else if (message.contains("color")) {
+                colorNode(message);
+            } else if (message.contains("size")) {
+                sizeNode(message);
+            } else if (message.contains("cR") || message.contains("sR")) {
+                topology.setCommunicationRange(Double.parseDouble(message.substring(message.indexOf(":") + 1, message.indexOf(";")).trim()));
+                topology.setSensingRange(Double.parseDouble(message.substring(message.indexOf("sR :") + 4, message.indexOf("]")).trim()));
             }
-        } else if (message.contains("add")) {
-            for (String line : lines) {
-                getProperties(line);
-                addNode(id, x, y, z);
-            }
-        } else if (message.contains("del")) {
-            getProperties(message);
-            delNode(id);
-        } else if (message.contains("color")) {
-            colorNode(message);
-        } else if (message.contains("size")) {
-            sizeNode(message);
-        } else if (message.contains("cR") || message.contains("sR")) {
-            topology.setCommunicationRange(Double.parseDouble(message.substring(message.indexOf(":") + 1, message.indexOf(";")).trim()));
-            topology.setSensingRange(Double.parseDouble(message.substring(message.indexOf("sR :") + 4, message.indexOf("]")).trim()));
+        } catch (ConcurrentModificationException | NullPointerException ignored) {
+
         }
+        topology.resume();
     }
 
     private void colorNode(String message) {
@@ -105,6 +114,8 @@ public class StringGestion {
     }
 
     private void moveNode(int id, double x, double y, double z) {
+
         topology.findNodeById(id).setLocation(x, y, z);
+
     }
 }

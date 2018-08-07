@@ -3,6 +3,9 @@ package jbotsimx.network;
 import jbotsim.Topology;
 import jbotsimx.ui.JViewer;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class ClientMain {
     public static void main(String[] args) {
         if(args.length != 2){
@@ -13,9 +16,18 @@ public class ClientMain {
         JViewer jViewer = new JViewer(topology);
 
         jViewer.setTitle("Client");
-        Client client = new Client(topology);
+        ClientTCP clientTCP = new ClientTCP(topology);
+        ClientUDP clientUDP = new ClientUDP(topology);
 
-        client.run(args[0], Integer.parseInt(args[1]));
+
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                clientUDP.run(args[0], Integer.parseInt(args[1])+1);
+            }
+        }, 200);
+        clientTCP.run(args[0], Integer.parseInt(args[1]));
     }
 
 }

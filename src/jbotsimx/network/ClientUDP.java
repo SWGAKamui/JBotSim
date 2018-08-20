@@ -9,7 +9,6 @@ import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.SocketChannel;
 
-@SuppressWarnings("Duplicates")
 public class ClientUDP {
 
     private Topology topology;

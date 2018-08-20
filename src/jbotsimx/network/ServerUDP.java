@@ -1,12 +1,8 @@
 package jbotsimx.network;
 
-import jbotsim.Color;
 import jbotsim.Node;
 import jbotsim.Topology;
-import jbotsim._Properties;
 import jbotsim.event.MovementListener;
-import jbotsim.event.PropertyListener;
-import jbotsim.event.TopologyListener;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -21,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-@SuppressWarnings("Duplicates")
 public class ServerUDP implements MovementListener {
     ServerSocketChannel serverSocketChannel;
     private Topology topology;

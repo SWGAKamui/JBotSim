@@ -8,7 +8,7 @@ import java.util.TimerTask;
 
 public class ClientMain {
     public static void main(String[] args) {
-        if(args.length != 2){
+        if (args.length != 2) {
             System.out.println("USAGE : Server IP, port");
             System.exit(0);
         }
@@ -24,7 +24,7 @@ public class ClientMain {
         t.schedule(new TimerTask() {
             @Override
             public void run() {
-                clientUDP.run(args[0], Integer.parseInt(args[1])+1);
+                clientUDP.run(args[0], Integer.parseInt(args[1]) + 1);
             }
         }, 200);
         clientTCP.run(args[0], Integer.parseInt(args[1]));

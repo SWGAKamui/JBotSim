@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.SocketChannel;
 
-@SuppressWarnings("Duplicates")
+
 public class ClientTCP {
 
 private Topology topology;

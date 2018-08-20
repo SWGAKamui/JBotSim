@@ -4,7 +4,7 @@ import jbotsim.Color;
 import jbotsim.Node;
 import jbotsim.Topology;
 import jbotsim._Properties;
-import jbotsim.event.MovementListener;
+
 import jbotsim.event.PropertyListener;
 import jbotsim.event.TopologyListener;
 
@@ -17,12 +17,11 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-@SuppressWarnings("Duplicates")
+
 public class ServerTCP implements TopologyListener, PropertyListener {
     ServerSocketChannel serverSocketChannel;
     private Topology topology;

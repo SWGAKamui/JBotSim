@@ -9,13 +9,11 @@ import jbotsim.event.PropertyListener;
 import jbotsim.event.TopologyListener;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,8 +32,12 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
     private double sensRange = 0;
     private Boolean exception = false;
     private Boolean hasCreatedServer = false;
+    private IP ip = new IP();
+    private SocketChannel client;
+    private StringGestion stringGestion;
 
     public Server(Topology topology) {
+        stringGestion = new StringGestion(topology);
         listNodestoAdd = topology.getNodes();
         this.topology = topology;
     }
@@ -45,86 +47,32 @@ public class Server implements MovementListener, TopologyListener, PropertyListe
 
     public void run(String serverIp, int port) {
         try {
-            serverSocketChannel = ServerSocketChannel.open();
-            serverSocketChannel.configureBlocking(false);
-            serverSocketChannel.socket().setReuseAddress(true);
+            System.out.println("Server try to connect ****");
 
-            IP ip = new IP();
             StringGestion.parseIntIP(serverIp, ip);
-
             byte[] address = {(byte) ip.ip1, (byte) ip.ip2, (byte) ip.ip3, (byte) ip.ip4};
-            InetAddress ipAdd = InetAddress.getByAddress(address);
+            InetAddress ip = InetAddress.getByAddress(address);
 
-            serverSocketChannel.bind(new InetSocketAddress(ipAdd, port));
+            client = SocketChannel.open(new InetSocketAddress(ip, port));
+            client.socket().setTcpNoDelay(true);
 
-            Selector selector = Selector.open();
-            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-            System.out.println("Server is created");
-
-            while (!exception) {
-                hasCreatedServer = true;
-                selector.selectNow();
-
-                Set<SelectionKey> Keys = selector.selectedKeys();
-                Iterator<SelectionKey> iterator = Keys.iterator();
-                while (iterator.hasNext()) {
-                    SelectionKey myKey = iterator.next();
-                    if (myKey.isAcceptable()) {
-                        SocketChannel client = serverSocketChannel.accept();
-                        nbClient++;
-                        client.configureBlocking(false);
-
-                        client.register(selector, SelectionKey.OP_WRITE);
-                    } else if (myKey.isWritable()) {
-                        byte[] message;
-                        ByteBuffer buffer;
-                        SocketChannel client = (SocketChannel) myKey.channel();
-
-                        if (comRange != topology.getCommunicationRange() || sensRange != topology.getSensingRange()) {
-                            messageToSendSave = ("[cR : " + topology.getCommunicationRange() + ";" + "sR : " + topology.getSensingRange() + "]");
-                            comRange = topology.getCommunicationRange();
-                            sensRange = topology.getSensingRange();
-
-                        }
-                        if (!listNodestoAdd.isEmpty()) {
-                            messageToSendSave = ("add : [id = " + listNodestoAdd.get(0).getID()
-                                    + " , x = " + listNodestoAdd.get(0).getX()
-                                    + " , y = " + listNodestoAdd.get(0).getY()
-                                    + " , z = " + listNodestoAdd.get(0).getZ() + "]\n");
-                            listNodestoAdd.remove(0);
-                            if (!listNodestoAdd.isEmpty()) {
-                                messageToSendSave += ("add : [id = " + listNodestoAdd.get(0).getID()
-                                        + " , x = " + listNodestoAdd.get(0).getX()
-                                        + " , y = " + listNodestoAdd.get(0).getY()
-                                        + " , z = " + listNodestoAdd.get(0).getZ() + "]\n");
-                                listNodestoAdd.remove(0);
-                            }
-                        }
-                        if (!messageToSendSave.contains("none")) {
-                            message = messageToSendSave.getBytes();
-                            buffer = ByteBuffer.wrap(message);
-                            client.write(buffer);
-                            messageToSendSave = "none";
-                        } else {
-                            message = messageToSend.getBytes();
-                            buffer = ByteBuffer.wrap(message);
-                            client.write(buffer);
-                            if (messageToSend.contains("move"))
-                                listIdToSend.clear();
-                            messageToSend = "none";
-                        }
-                    }
-                    Thread.sleep(30);
-                    iterator.remove();
-                }
-                if (nbClientSave != nbClient) {
-                    nbClientSave = nbClient;
-                    System.out.println("Number of person connected : " + nbClient);
-                }
-
+            System.out.println("Waiting for connection ***");
+            while (!client.finishConnect()) {
+                //wait connection
+                System.out.print("*");
             }
 
-        } catch (InterruptedException | IOException e) {
+            System.out.println("server is connected : " + client.isConnected() + "\n");
+
+            while (client.isConnected()) {
+                if(!messageToSendSave.equals("none"))
+                    client.write(ByteBuffer.wrap(messageToSendSave.getBytes()));
+                else
+                    client.write(ByteBuffer.wrap(messageToSendSave.getBytes()));
+            }
+            client.close();
+            System.out.println("server is closed");
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
